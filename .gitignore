@@ -1,0 +1,5 @@
+.venv/
+.ipynb_checkpoints/
+fleetcheck/
+__pycache__/
+report.json
