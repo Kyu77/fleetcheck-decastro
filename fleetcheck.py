@@ -3,6 +3,7 @@ import csv
 import ipaddress
 import json
 import logging
+import os
 import sys
 from datetime import datetime
 
@@ -135,6 +136,11 @@ def main():
 
     config = load_config("config.json")
     servers, invalid = load(args.inventory)
+    webhook_url = os.environ.get("FLEETCHECK_WEBHOOK_URL")
+    if webhook_url is None:
+        log.info("FLEETCHECK_WEBHOOK_URL absent : pas d'alerte")
+    else:
+        log.info("FLEETCHECK_WEBHOOK_URL défini : alerte activée")
     if args.env:
         servers = by_env(servers, args.env)
         if not servers:
@@ -156,3 +162,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+class Server:
+    def __init__(self, name, env, ip, port, role):
+        self.name = name
+        self.env = env
+        self.ip = ip
+        self.port = port
+        self.role = role
+
+    def is_prod(self):
+        return self.env == "prod"
+
+    def url(self, path):
+        return f"http://{self.ip}:{self.port}{path}"
+
+    def __repr__(self):
+        return f"Server({self.name!r}, {self.env!r})"

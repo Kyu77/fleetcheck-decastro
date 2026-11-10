@@ -3,3 +3,4 @@
 fleetcheck/
 __pycache__/
 report.json
+.vscode/
